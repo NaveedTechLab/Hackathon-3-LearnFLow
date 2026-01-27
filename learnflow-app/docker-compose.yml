@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  # API Gateway - Main entry point
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET_KEY=learnflow-secret-key-change-in-production
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+      - LLM_MODEL=openai/gpt-3.5-turbo
+      - TRIAGE_URL=http://triage-agent:8001
+      - CONCEPTS_URL=http://concepts-agent:8002
+      - CODE_REVIEW_URL=http://code-review-agent:8003
+      - DEBUG_URL=http://debug-agent:8004
+      - EXERCISE_URL=http://exercise-agent:8005
+      - PROGRESS_URL=http://progress-agent:8006
+    depends_on:
+      - triage-agent
+      - concepts-agent
+    networks:
+      - learnflow-network
+
+  # Frontend Next.js App
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - api-gateway
+    networks:
+      - learnflow-network
+
+  # Triage Agent - Routes queries to appropriate agents
+  triage-agent:
+    build:
+      context: ./services/triage-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - APP_NAME=triage-agent
+      - APP_PORT=8001
+    networks:
+      - learnflow-network
+
+  # Concepts Agent - Explains Python concepts
+  concepts-agent:
+    build:
+      context: ./services/concepts-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      - APP_NAME=concepts-agent
+      - APP_PORT=8002
+    networks:
+      - learnflow-network
+
+  # Code Review Agent
+  code-review-agent:
+    build:
+      context: ./services/code-review-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8003:8003"
+    environment:
+      - APP_NAME=code-review-agent
+      - APP_PORT=8003
+    networks:
+      - learnflow-network
+
+  # Debug Agent
+  debug-agent:
+    build:
+      context: ./services/debug-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8004:8004"
+    environment:
+      - APP_NAME=debug-agent
+      - APP_PORT=8004
+    networks:
+      - learnflow-network
+
+  # Exercise Agent - Code execution and grading
+  exercise-agent:
+    build:
+      context: ./services/exercise-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8005:8005"
+    environment:
+      - APP_NAME=exercise-agent
+      - APP_PORT=8005
+    networks:
+      - learnflow-network
+
+  # Progress Agent - Tracks learning progress
+  progress-agent:
+    build:
+      context: ./services/progress-agent
+      dockerfile: Dockerfile
+    ports:
+      - "8006:8006"
+    environment:
+      - APP_NAME=progress-agent
+      - APP_PORT=8006
+    networks:
+      - learnflow-network
+
+networks:
+  learnflow-network:
+    driver: bridge

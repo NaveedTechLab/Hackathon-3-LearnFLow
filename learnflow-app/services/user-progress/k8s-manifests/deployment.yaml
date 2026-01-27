@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-progress
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-progress
+  template:
+    metadata:
+      labels:
+        app: user-progress
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "user-progress"
+        dapr.io/app-port: "8000"
+        dapr.io/app-protocol: "http"
+        dapr.io/log-level: "info"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: user-progress
+        image: user-progress:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DAPR_HTTP_ENDPOINT
+          value: "http://localhost:3500"
+        - name: DAPR_GRPC_ENDPOINT
+          value: "unix:///var/run/daprd.sock"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-progress-service
+  namespace: default
+spec:
+  selector:
+    app: user-progress
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

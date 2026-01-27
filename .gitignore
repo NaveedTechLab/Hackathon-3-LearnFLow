@@ -1,0 +1,48 @@
+# Environment variables (Contains API keys - NEVER commit)
+.env
+.env.local
+.env.production
+*.env
+
+# Node modules
+node_modules/
+**/node_modules/
+
+# Next.js
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+mcp-shell.log
+
+# Build
+dist/
+build/
+
+# Testing
+coverage/
+.pytest_cache/
+
+# Goose (AI tool cache)
+.goose/

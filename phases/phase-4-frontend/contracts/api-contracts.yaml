@@ -1,0 +1,54 @@
+# API Contracts for Frontend-Backend Communication
+
+## Course Agent Service Integration
+- Dapr Service Invocation:
+  - Method: POST /generate-lesson
+    - Request: course parameters and user context
+    - Response: lesson content and metadata
+    - Success: 200 OK with lesson object
+    - Error: 400 Bad Request, 500 Internal Server Error
+
+  - Method: GET /lessons
+    - Request: optional filters (user_id, lesson_type, date_range)
+    - Response: list of lessons with metadata
+    - Success: 200 OK
+    - Error: 500 Internal Server Error
+
+  - Method: POST /update-progress
+    - Request: user_id, lesson_id, progress_data
+    - Response: confirmation and updated metrics
+    - Success: 200 OK
+    - Error: 400 Bad Request, 500 Internal Server Error
+
+  - Method: GET /status
+    - Request: user_id and optional lesson_id
+    - Response: progress status and metrics
+    - Success: 200 OK
+    - Error: 500 Internal Server Error
+
+## Frontend API Routes (Next.js)
+- Proxy endpoints that forward to Course Agent via Dapr:
+  - POST /api/lessons/generate
+    - Forward to Dapr service invocation for Course Agent
+    - Request: lesson generation parameters
+    - Response: generated lesson content
+
+  - GET /api/lessons
+    - Forward to Dapr service invocation for Course Agent
+    - Request: optional filters
+    - Response: list of lessons
+
+  - POST /api/progress/update
+    - Forward to Dapr service invocation for User Progress
+    - Request: progress update data
+    - Response: confirmation of update
+
+  - GET /api/progress/status
+    - Forward to Dapr service invocation for User Progress
+    - Request: user and lesson identifiers
+    - Response: progress status
+
+## Dapr Component Integration
+- State Management: Store/retrieve lesson and progress data via Dapr state store
+- Pub/Sub: Subscribe to learning events via Dapr pub/sub
+- Service Invocation: Call Course Agent and User Progress services via Dapr

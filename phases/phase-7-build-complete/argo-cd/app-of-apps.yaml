@@ -1,0 +1,116 @@
+# Argo CD App-of-Apps Pattern Configuration for LearnFlow Platform
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: learnflow-platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+  ignoreDifferences:
+  - group: "apps"
+    kind: "Deployment"
+    jsonPointers:
+    - /spec/replicas
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: course-agent-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/phase-3-backend-services/course-agent/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: course-agent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: user-progress-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/phase-3-backend-services/user-progress/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: user-progress
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: frontend-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/phase-4-frontend/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: frontend
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tutor-agent-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/phase-7-build-complete/tutor-agent/k8s-manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: tutor-agent
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

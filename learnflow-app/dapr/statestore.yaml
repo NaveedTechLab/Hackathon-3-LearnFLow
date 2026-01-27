@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: statestore
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    value: "host=localhost user=postgres password=password port=5432 database=learnflow"
+  - name: table
+    value: "dapr_state_store"
+  - name: schema
+    value: "public"
+  - name: actorStateStore
+    value: "true"

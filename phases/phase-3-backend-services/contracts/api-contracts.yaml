@@ -1,0 +1,32 @@
+# API Contracts for Backend Services
+
+## Course Agent Service
+- POST /generate-lesson
+  - Request: course parameters and user context
+  - Response: lesson content and metadata
+  - Success: 201 Created
+  - Error: 400 Bad Request, 500 Internal Server Error
+
+- GET /lessons
+  - Request: optional filters (user_id, lesson_type, date_range)
+  - Response: list of lessons with metadata
+  - Success: 200 OK
+  - Error: 500 Internal Server Error
+
+## User Progress Service
+- POST /update-progress
+  - Request: user_id, lesson_id, progress_data
+  - Response: confirmation and updated metrics
+  - Success: 200 OK
+  - Error: 400 Bad Request, 500 Internal Server Error
+
+- GET /status
+  - Request: user_id and optional lesson_id
+  - Response: progress status and metrics
+  - Success: 200 OK
+  - Error: 500 Internal Server Error
+
+## Dapr Integration Points
+- State Management: Store/retrieve lesson and progress data via Dapr state store
+- Pub/Sub: Publish/subscribe to learning events via Dapr pub/sub
+- Service Invocation: Call between Course Agent and User Progress services

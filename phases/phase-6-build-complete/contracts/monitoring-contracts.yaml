@@ -1,0 +1,38 @@
+# API Contracts for Monitoring and Observability
+
+## Dapr Observability Endpoints
+- GET /v1.0/metrics
+  - Response: 200 OK with application metrics in Prometheus format
+  - Success: Returns Dapr and application metrics
+  - Error: 500 Internal Server Error if metrics unavailable
+
+- GET /v1.0/traces
+  - Response: 200 OK with trace data
+  - Success: Returns trace information for service invocations
+  - Error: 500 Internal Server Error if tracing unavailable
+
+## Kubernetes HPA Endpoints
+- GET /apis/autoscaling/v2/horizontalpodautoscalers
+  - Response: 200 OK with HPA resource list
+  - Success: Returns HPA configurations
+  - Error: 500 Internal Server Error if API unavailable
+
+## Resilience Testing Endpoints
+- POST /test/resilience/retry
+  - Request: service endpoint and failure simulation parameters
+  - Response: 200 OK with retry behavior results
+  - Success: Demonstrates retry policy in action
+  - Error: 500 Internal Server Error if test fails
+
+## Grafana Dashboard Endpoints
+- GET /api/dashboards/uid/{uid}
+  - Request: dashboard UID parameter
+  - Response: 200 OK with dashboard JSON
+  - Success: Returns dashboard configuration
+  - Error: 404 Not Found if dashboard doesn't exist
+
+- POST /api/datasources
+  - Request: datasource configuration in JSON
+  - Response: 200 OK with datasource details
+  - Success: Datasource created/updated successfully
+  - Error: 400 Bad Request for invalid configuration

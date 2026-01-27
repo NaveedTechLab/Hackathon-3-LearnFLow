@@ -1,0 +1,59 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: lesson-generation-resilience
+spec:
+  type: middleware.http.resiliency
+  version: v1
+  metadata:
+  - name: retryPolicy
+    value: |
+      {
+        "maxRetries": 3,
+        "retryPolicy": "constant",
+        "retryInterval": "2s",
+        "retryTimeout": "30s",
+        "retryBackoffCoefficient": 1.0
+      }
+  - name: circuitBreakerPolicy
+    value: |
+      {
+        "failureThreshold": 0.6,
+        "returnTripTimeout": "60s",
+        "tripTimeout": "300s",
+        "rollingWindow": "10s"
+      }
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: kafka-resilience
+spec:
+  type: middleware.http.outboundRetry
+  version: v1
+  metadata:
+  - name: maxRetries
+    value: "5"
+  - name: retryInterval
+    value: "2s"
+  - name: retryPattern
+    value: "constant"
+  - name: retryTimeout
+    value: "60s"
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: service-call-circuit-breaker
+spec:
+  type: middleware.http.circuitbreaker
+  version: v1
+  metadata:
+  - name: maxRequests
+    value: "1"
+  - name: timeout
+    value: "30s"
+  - name: tripThreshold
+    value: "0.6"
+  - name: interval
+    value: "10s"

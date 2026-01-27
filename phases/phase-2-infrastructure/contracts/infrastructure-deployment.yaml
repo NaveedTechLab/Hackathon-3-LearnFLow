@@ -1,0 +1,20 @@
+# Infrastructure Deployment Contract
+
+## Purpose
+Defines the contract for deploying Kafka and PostgreSQL infrastructure using skills.
+
+## Deployment Steps
+- Kafka: Execute kafka-k8s-setup skill
+- PostgreSQL: Execute postgres-k8s-setup skill
+- Verification: Run verify.py scripts from each skill
+
+## Expected Outcomes
+- Kafka pods in Running status
+- PostgreSQL pods in Running status
+- Services accessible within cluster
+- Minimal success/failure output to maintain token efficiency
+
+## Validation Criteria
+- Both verification scripts return "Done"
+- Pod status is Running for both services
+- Endpoints documented in infra-endpoints.txt

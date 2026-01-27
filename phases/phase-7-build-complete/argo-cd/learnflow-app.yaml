@@ -1,0 +1,35 @@
+# Argo CD Application Manifest for LearnFlow Platform
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: learnflow-platform-full
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/learnflow/learnflow-platform.git
+    targetRevision: HEAD
+    path: learnflow-app/phase-3-backend-services
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: learnflow-platform
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+  ignoreDifferences:
+  - group: "apps"
+    kind: "Deployment"
+    jsonPointers:
+    - /spec/replicas
+  - group: "autoscaling"
+    kind: "HorizontalPodAutoscaler"
+    jsonPointers:
+    - /spec/maxReplicas
+    - /spec/minReplicas

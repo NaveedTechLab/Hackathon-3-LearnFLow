@@ -1,0 +1,40 @@
+# API Contracts for E2E Testing
+
+## Course Agent Service Endpoints
+- POST /generate-lesson
+  - Request: lesson generation parameters (course_id, user_id, lesson_type)
+  - Response: 201 Created with lesson details
+  - Success: Lesson generated and event published to Kafka
+  - Error: 400 Bad Request, 500 Internal Server Error
+
+- GET /lessons
+  - Request: optional filters (user_id, course_id, date_range)
+  - Response: 200 OK with list of lessons
+  - Success: Returns available lessons
+  - Error: 500 Internal Server Error
+
+## User Progress Service Endpoints
+- POST /update-progress
+  - Request: progress update data (user_id, lesson_id, progress_percentage)
+  - Response: 200 OK with confirmation
+  - Success: Progress updated in database
+  - Error: 400 Bad Request, 500 Internal Server Error
+
+- GET /status
+  - Request: user_id and optional lesson_id
+  - Response: 200 OK with progress status
+  - Success: Returns current progress status
+  - Error: 500 Internal Server Error
+
+## E2E Test Verification Endpoints
+- Kafka Topic: lesson-generation
+  - Expected message format: {lesson_id, user_id, course_id, timestamp}
+  - Verification: Event appears in topic after lesson generation
+
+- PostgreSQL Table: user_progress
+  - Expected record format: {user_id, lesson_id, progress_percentage, last_updated}
+  - Verification: Record updated after progress update
+
+- Frontend API Response
+  - Expected format: {status: "success", data: {...}}
+  - Verification: Response matches expected structure after API call

@@ -1,0 +1,37 @@
+# Authentication Configuration for LearnFlow Platform
+
+# JWT Configuration
+JWT_SECRET: "learnflow-secret-key-change-in-production"
+JWT_ALGORITHM: "HS256"
+TOKEN_EXPIRY_HOURS: 24
+
+# Dapr Component for Authentication
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: auth-provider
+spec:
+  type: middleware.http.oauth2
+  version: v1
+  metadata:
+  - name: clientId
+    value: "{{ .Env.CLIENT_ID | default \"learnflow-client\" }}"
+  - name: clientSecret
+    value: "{{ .Env.CLIENT_SECRET | default \"learnflow-secret\" }}"
+  - name: scopes
+    value: "openid,profile,email"
+  - name: redirectURL
+    value: "http://localhost:3000/auth/callback"
+
+---
+# Alternative: Basic Authentication Middleware Component
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: basic-auth-middleware
+spec:
+  type: middleware.http.bearer
+  version: v1
+  metadata:
+  - name: signingKey
+    value: "learnflow-jwt-signing-key"

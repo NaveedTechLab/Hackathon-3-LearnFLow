@@ -1,0 +1,35 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: dapr-config
+spec:
+  tracing:
+    samplingRate: "1"
+    zipkin:
+      endpointAddress: "http://zipkin.observability.svc.cluster.local:9411/api/v2/spans"
+  metric:
+    enabled: true
+    serviceInvocationAggregation:
+      enabled: true
+      aggregationWindowInSeconds: 30
+  httpPipeline:
+    handlers: []
+  features:
+    - name: AppHealthCheck
+      enabled: true
+  accessControl:
+    defaultAction: allow
+    trustDomain: "learnflow-platform"
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: zipkin
+spec:
+  type: exporters.zipkin
+  version: v1
+  metadata:
+  - name: enabled
+    value: "true"
+  - name: exporterAddress
+    value: "http://zipkin.observability.svc.cluster.local:9411/api/v1/spans"

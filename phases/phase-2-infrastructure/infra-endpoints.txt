@@ -1,0 +1,16 @@
+# Infrastructure Service Endpoints
+
+## Kafka Service
+- Internal Endpoint: kafka.kafka.svc.cluster.local:9092
+- Service Name: kafka-service
+- Namespace: kafka
+
+## PostgreSQL Service
+- Internal Endpoint: postgresql.postgres.svc.cluster.local:5432
+- Service Name: postgresql-service
+- Namespace: postgres
+
+## Notes
+- These endpoints are for internal cluster communication
+- External access would require LoadBalancer or Ingress configuration
+- Authentication and SSL settings may be required for secure connections

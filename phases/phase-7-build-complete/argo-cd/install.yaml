@@ -1,0 +1,120 @@
+# Argo CD Installation Manifest for LearnFlow Platform
+
+# Install Cert Manager (dependency for Argo CD)
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: certificates.cert-manager.io
+spec:
+  # This is a simplified representation - in practice, this would include the full CRD
+  group: cert-manager.io
+  names:
+    kind: Certificate
+    listKind: CertificateList
+    plural: certificates
+    singular: certificate
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              secretName:
+                type: string
+            required:
+            - secretName
+
+---
+# Argo CD Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+  labels:
+    name: argocd
+
+---
+# Argo CD Application CRD
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: applications.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: Application
+    listKind: ApplicationList
+    plural: applications
+    singular: application
+    shortNames:
+    - app
+    - apps
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              source:
+                type: object
+                properties:
+                  repoURL:
+                    type: string
+                  path:
+                    type: string
+                  targetRevision:
+                    type: string
+              destination:
+                type: object
+                properties:
+                  server:
+                    type: string
+                  namespace:
+                    type: string
+            required:
+            - source
+            - destination
+    served: true
+    storage: true
+
+---
+# Argo CD Service Accounts
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-application-controller
+  namespace: argocd
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-server
+  namespace: argocd
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: argocd-dex-server
+  namespace: argocd
+
+---
+# Argo CD ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  namespace: argocd
+data:
+  # Argo CD configuration parameters
+  server.insecure: "true"  # Set to false in production
